@@ -1058,176 +1058,6 @@ Tabs.AutoFarm:AddButton({
     return EmoteNames
 end
 
-if _G.DevMode == true then
-
-function GetCosmeticName()
-    local Names = {}
-    local Folder = game:GetService("ReplicatedStorage").Items.Cosmetics
-
-    for _, thing in ipairs(Folder:GetChildren()) do
-        if thing:IsA("LocalScript") or thing:IsA("ModuleScript") then
-            Names[#Names + 1] = thing.Name 
-        end
-        if _ % 50 == 0 then 
-            task.wait()
-        end
-    end
-
-    return Names
-end
-    
- function GetLoadoutName()
-    local Names = {}
-    local Folder = game:GetService("ReplicatedStorage").Items.Loadout
-
-    for _, thing in ipairs(Folder:GetChildren()) do
-        if thing:IsA("LocalScript") or thing:IsA("ModuleScript") then
-            Names[#Names + 1] = thing.Name 
-        end
-        if _ % 50 == 0 then
-            task.wait()
-        end
-    end
-
-    return Names
-end
-
-function GetPerksName()
-    local Names = {}
-    local Folder = game:GetService("ReplicatedStorage").Items.Perks
-
-    for _, thing in ipairs(Folder:GetChildren()) do
-        if thing:IsA("LocalScript") or thing:IsA("ModuleScript") then
-            Names[#Names + 1] = thing.Name 
-        end
-        if _ % 50 == 0 then 
-            task.wait()
-        end
-    end
-
-    return Names
-end
-
-local SelectedBuyEmote = ""
-local SelectedBuyPerks = ""
-local SelectedBuyLoadout = ""
-local SelectedBuyCosmetic = ""
-    
- Tabs.AutoFarm:AddParagraph({
-        Title = "Purchase Shortcut",
-        Content = "WARNING: it can waste your tokens/points/tickets"
-    })
-
-local Dropdown = Tabs.AutoFarm:AddDropdown("Dropdown1", {
-    Title = "Select Loadout",
-    Values = GetLoadoutName(),
-    Multi = false,
-    Default = 1,
-})
-
-Dropdown:OnChanged(function(Value)
-    SelectedBuyLoadout = Value
-end)
-
-Tabs.AutoFarm:AddButton({
-        Title = "Purchase Loadout",
-        Description = " ",
-        Callback = function()
-            local Folder = game:GetService("ReplicatedStorage").Items.Loadout
-            local purchaseEvent = game:GetService("ReplicatedStorage").Events.Data.Purchase
-
-            for _, thing in ipairs(Folder:GetChildren()) do
-                 if (thing:IsA("LocalScript") or thing:IsA("ModuleScript")) and thing.Name == SelectedBuyLoadout and thing:GetAttribute("ID") then
-                     local ID = thing:GetAttribute("ID")
-                     purchaseEvent:InvokeServer(ID)
-                end
-            end
-        end
-    })
-
-local Dropdown = Tabs.AutoFarm:AddDropdown("Dropdown2", {
-    Title = "Select Emote",
-    Values = GetEmotesName(),
-    Multi = false,
-    Default = 1,
-})
-
-Dropdown:OnChanged(function(Value)
-    SelectedBuyEmote = Value
-end)
-
-Tabs.AutoFarm:AddButton({
-        Title = "Purchase Emote",
-        Description = " ",
-        Callback = function()
-            local Folder = game:GetService("ReplicatedStorage").Items.Emotes
-            local purchaseEvent = game:GetService("ReplicatedStorage").Events.Data.Purchase
-
-            for _, thing in ipairs(Folder:GetChildren()) do
-                 if (thing:IsA("LocalScript") or thing:IsA("ModuleScript")) and thing.Name == SelectedBuyEmote and thing:GetAttribute("ID") then
-                     local ID = thing:GetAttribute("ID")
-                     purchaseEvent:InvokeServer(ID)
-                end
-            end
-        end
-    })
-
-local Dropdown = Tabs.AutoFarm:AddDropdown("Dropdown3", {
-    Title = "Select Cosmetic",
-    Values = GetCosmeticName(),
-    Multi = false,
-    Default = 1,
-})
-
-Dropdown:OnChanged(function(Value)
-    SelectedBuyCosmetic = Value
-end)
-
-Tabs.AutoFarm:AddButton({
-        Title = "Purchase Cosmetic",
-        Description = " ",
-        Callback = function()
-            local Folder = game:GetService("ReplicatedStorage").Items.Cosmetics
-            local purchaseEvent = game:GetService("ReplicatedStorage").Events.Data.Purchase
-
-            for _, thing in ipairs(Folder:GetChildren()) do
-                 if (thing:IsA("LocalScript") or thing:IsA("ModuleScript")) and thing.Name == SelectedBuyCosmetic and thing:GetAttribute("ID") then
-                     local ID = thing:GetAttribute("ID")
-                     purchaseEvent:InvokeServer(ID)
-                end
-            end
-        end
-    })
-
-local Dropdown = Tabs.AutoFarm:AddDropdown("Dropdown4", {
-    Title = "Select Perks",
-    Values = GetPerksName(),
-    Multi = false,
-    Default = 1,
-})
-
-Dropdown:OnChanged(function(Value)
-    SelectedBuyPerks = Value
-end)
-
-Tabs.AutoFarm:AddButton({
-        Title = "Purchase Perks",
-        Description = " ",
-        Callback = function()
-            local Folder = game:GetService("ReplicatedStorage").Items.Perks
-            local purchaseEvent = game:GetService("ReplicatedStorage").Events.Data.Purchase
-
-            for _, thing in ipairs(Folder:GetChildren()) do
-                 if (thing:IsA("LocalScript") or thing:IsA("ModuleScript")) and thing.Name == SelectedBuyPerks and thing:GetAttribute("ID") then
-                     local ID = thing:GetAttribute("ID")
-                     purchaseEvent:InvokeServer(ID)
-                end
-            end
-        end
-    })
-    
-end
-
 -- Combat
 
 Tabs.Combat:AddParagraph({
@@ -1901,7 +1731,7 @@ end
 function CarryPlayer()
 local player = game.Players.LocalPlayer
 local nearestPlayer = getNearestDownedPlayer()
-      if nearestPlayer then
+   if nearestPlayer and player.Character:GetAttribute("State") == "Run" or player.Character:GetAttribute("State") == "Air" or player.Character:GetAttribute("State") == "Slide" or player.Character:GetAttribute("State") == "Fall" or player.Character:GetAttribute("State") == "Jump" or player.Character:GetAttribute("State") == "Crouch" then
          game:GetService("ReplicatedStorage").Events.Character.Interact:FireServer("Carry", nil, tostring(nearestPlayer))
          game:GetService("ReplicatedStorage").Events.Character.Interact:FireServer("Carry", false, tostring(nearestPlayer))
          game:GetService("ReplicatedStorage").Events.Character.Interact:FireServer("Carry", true, tostring(nearestPlayer))
@@ -1909,7 +1739,7 @@ local nearestPlayer = getNearestDownedPlayer()
          game:GetService("ReplicatedStorage").Events.Character.Interact:FireServer("Carry", true, tostring(nearestPlayer))
          game:GetService("ReplicatedStorage").Events.Character.Interact:FireServer("Carry", true, tostring(nearestPlayer))
          game:GetService("ReplicatedStorage").Events.Character.Interact:FireServer("Carry", true, tostring(nearestPlayer))
-      end
+     end
 end
 
 local Players = game:GetService("Players")
@@ -2015,7 +1845,7 @@ target.AutoCarryToggle:Destroy()
 end
 end
     
-local Toggle = Tabs.Misc:AddToggle("AutoCarry", {Title = "Auto Carry", Default = false})
+local Toggle = Tabs.Misc:AddToggle("AutoCarry", {Title = "Auto Carry (I'll remove this later)", Default = false})
 
 Toggle:OnChanged(function(State)
     AutoCarryGui = State
@@ -2473,6 +2303,7 @@ local GravityAdjustment = 10
 
 local GravityGui = false
 local GravityToggle = false
+local GravityKey = false
 
 local function creategravitytoggle()
     local screenGui = Instance.new("ScreenGui")
@@ -2535,13 +2366,33 @@ end
 local Toggle = Tabs.Misc:AddToggle("GravityToggle", {Title = "Gravity Toggle", Default = false })
 
     Toggle:OnChanged(function(State)
- GravityGui = State
-if GravityGui then
-creategravitytoggle()
-else
-destroygravitytoggle()
-end
+        GravityGui = State
+
+       if GravityGui then
+          creategravitytoggle()
+       else
+          destroygravitytoggle()
+     end
 end)
+
+local Keybind = Tabs.Misc:AddKeybind("GravitKey", {
+        Title = "Gravity Keybind",
+        Mode = "Toggle", -- Always, Toggle, Hold
+        Default = "J",
+        
+        Callback = function(Bool)
+        BHopKey = Bool
+          spawn(function()
+            while true and wait(0.1) do
+                if GravityKey then 
+                   game.Workspace.Gravity = GravityAdjustment
+               else
+                   game.Workspace.Gravity = NormalGravity
+               end
+           end
+       end)
+   end,
+    })
 
 local Input = Tabs.Misc:AddInput("GravityAdjust", {
         Title = "Gravity Adjustment",
@@ -2558,36 +2409,13 @@ Tabs.Misc:AddParagraph({
         Title = " ",
         Content = ""
     })
-
-local Keybind = Tabs.Misc:AddKeybind("KeyBHOP", {
-        Title = "Keybind to BHOP",
-        Mode = "Toggle", -- Always, Toggle, Hold
-        Default = "B",
-        
-        Callback = function(Bool)
-        BHopKey = Bool
-          spawn(function()
-            while true and wait(0.1) do
-                if BHopKey then 
-                 setfflag("MaxAltitudePDStickHipHeightPercent", "-24")
-             else
-                 setfflag("MaxAltitudePDStickHipHeightPercent", "10")
-                end
-           end
-       end)
-   end,
-
-        ChangedCallback = function(New)
-            print("Keybind changed!", New)
-        end
-    })
     
 local BHop = false
 local BHOPGuiSize = 75
-local BHOPAdjustNum = "-24"
 local delay = 1
 
 local BHop2 = false
+local BHopKey = false
 
 local function createtoggle()
     local screenGui = Instance.new("ScreenGui")
@@ -2632,32 +2460,36 @@ end
 -- Auto-Jump
 spawn(function()
 while true and wait(0.1) do
-    if BHop2 and BHOPType == "Acceleration" then
-         setfflag("MaxAltitudePDStickHipHeightPercent", BHOPAdjustNum)
-      else
-         setfflag("MaxAltitudePDStickHipHeightPercent", "10")
-    end
-       
-       if BHop2 and BHOPType == "No-Acceleration" then
+   if BHop2 then
+      if BHOPType == "Acceleration" then
           local char = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
           local humanoid = char:FindFirstChildOfClass("Humanoid")
           
           if not humanoid then return end
-          
-          if humanoid and humanoid.FloorMaterial ~= Enum.Material.Air then
+             if humanoid and humanoid.FloorMaterial ~= Enum.Material.Air then
+                setTFriction(-1)
+                humanoid.Jump = true
                 humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                humanoid.Jump = false
+          else
+               setTFriction(-1)
+            end
+       end
+
+       if BHOPType == "No-Acceleration" then
+          local char = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
+          local humanoid = char:FindFirstChildOfClass("Humanoid")
+          
+          if not humanoid then return end
+             if humanoid and humanoid.FloorMaterial ~= Enum.Material.Air then
+                humanoid.Jump = true
+                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                humanoid.Jump = false
+                end
              end
          end
      end
 end)
-
-local Players = game:GetService("Players")
-
-local function onPlayerRemoving()
-setfflag("MaxAltitudePDStickHipHeightPercent", "10")
-end
-
-Players.PlayerRemoving:Connect(onPlayerRemoving)
 
 function destroytoggle()
 local target = game.CoreGui
@@ -2670,13 +2502,57 @@ end
 local Toggle = Tabs.Misc:AddToggle("BHOPToggle", {Title = "BHOP Toggle", Default = false })
 
     Toggle:OnChanged(function(State)
- BHop = State
-if BHop then
-createtoggle()
-else
-destroytoggle()
-end
+       BHop = State
+       
+       if BHop then
+          createtoggle()
+       else
+          destroytoggle()
+      end
 end)
+
+local Keybind = Tabs.Misc:AddKeybind("KeyBHOP", {
+        Title = "Keybind to BHOP",
+        Mode = "Toggle", -- Always, Toggle, Hold
+        Default = "B",
+        
+        Callback = function(Bool)
+        BHopKey = Bool
+          spawn(function()
+            while true and wait(0.1) do
+              if BHopKey then
+                if BHOPType == "Acceleration" then 
+                 local char = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
+                 local humanoid = char:FindFirstChildOfClass("Humanoid")
+          
+                 if not humanoid then return end
+                 if humanoid and humanoid.FloorMaterial ~= Enum.Material.Air then
+                    setTFriction(-1)
+                    humanoid.Jump = true
+                    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    humanoid.Jump = false
+               else
+                  setTFriction(-1)
+                end
+           end
+                
+               if BHOPType == "No-Acceleration" then
+                   local char = game:GetService("Players").LocalPlayer.Character or game:GetService("Players").LocalPlayer.CharacterAdded:Wait()
+                   local humanoid = char:FindFirstChildOfClass("Humanoid")
+          
+                   if not humanoid then return end
+          
+                   if humanoid and humanoid.FloorMaterial ~= Enum.Material.Air then
+                       humanoid.Jump = true
+                       humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                       humanoid.Jump = false
+                       end
+                   end
+               end
+           end
+       end)
+   end,
+    })
 
 local Dropdown = Tabs.Misc:AddDropdown("BHOPType", {
         Title = "Select BHOP Type",
@@ -2697,17 +2573,6 @@ local Input = Tabs.Misc:AddInput("GuiSize", {
         Finished = false, -- Only calls callback when you press enter
         Callback = function(Value)
             BHOPGuiSize = tonumber(Value) or 75
-        end
-    })
-    
-local Input = Tabs.Misc:AddInput("BhopAdjust", {
-        Title = "BHOP Adjustment (Minus Only)",
-        Default = "-24",
-        Placeholder = "Minus Number",
-        Numeric = false, -- Only allows numbers
-        Finished = false, -- Only calls callback when you press enter
-        Callback = function(Value)
-            BHOPAdjustNum = tostring(Value) or  "-24"
         end
     })
 
@@ -2957,7 +2822,6 @@ local function setLowQuality()
 end
 
 local function setFlagsGraphics()
-setfflag("DebugGraphicsDisableDirect3D11", "true")
 setfflag("DebugGraphicsPreferVulkan", "true")
 setfflag("DebugTextureManagerSkipMips", "2")
 setfflag("TaskSchedulerLimitTargetFpsTo2402", "false")
@@ -3153,4 +3017,4 @@ setTJump(TJump2)
 setTJumpCap(TJumpCap2)
      end
    end
-end) 
+end)  
