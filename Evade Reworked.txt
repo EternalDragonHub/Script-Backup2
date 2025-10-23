@@ -1482,7 +1482,7 @@ local function createLagGui()
     lagGuiButton = Instance.new("TextButton", frame)
     lagGuiButton.Name = "ToggleButton"
     lagGuiButton.Text = "Trigger"
-    lagGuiButton.Size = UDim2.new(0, 100, 0, 100)
+    lagGuiButton.Size = UDim2.new(0.3, 100, 0.2, 100)
     lagGuiButton.Position = UDim2.new(0.65, 0, 0.13, 0)
     lagGuiButton.BackgroundColor3 = Color3.fromRGB(0, 120, 80)
     lagGuiButton.TextColor3 = Color3.new(1, 1, 1)
