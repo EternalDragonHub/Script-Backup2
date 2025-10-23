@@ -1455,7 +1455,7 @@ local function createLagGui()
     lagGui.Enabled = getgenv().lagSwitchEnabled
 
     local frame = Instance.new("Frame", lagGui)
-    frame.Size = UDim2.new(0, 190, 0, 30)
+    frame.Size = UDim2.new(0, 190, 0, 100)
     frame.Position = UDim2.new(0.5, -95, 0.35, 0)
     frame.BackgroundColor3 = Color3.fromRGB(30, 50, 80)
     frame.BackgroundTransparency = 0.35
@@ -1482,12 +1482,12 @@ local function createLagGui()
     lagGuiButton = Instance.new("TextButton", frame)
     lagGuiButton.Name = "ToggleButton"
     lagGuiButton.Text = "Trigger"
-    lagGuiButton.Size = UDim2.new(0.3, 0, 0.75, 0)
+    lagGuiButton.Size = UDim2.new(10, 0, 5, 0)
     lagGuiButton.Position = UDim2.new(0.65, 0, 0.13, 0)
     lagGuiButton.BackgroundColor3 = Color3.fromRGB(0, 120, 80)
     lagGuiButton.TextColor3 = Color3.new(1, 1, 1)
     lagGuiButton.Font = Enum.Font.Roboto
-    lagGuiButton.TextSize = 13
+    lagGuiButton.TextSize = 15
 
     local buttonCorner = Instance.new("UICorner", lagGuiButton)
     buttonCorner.CornerRadius = UDim.new(1, 0)
