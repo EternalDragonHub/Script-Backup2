@@ -1230,7 +1230,7 @@ local function createToggleGui(name, varName, yOffset)
 	local toggleBtn = Instance.new("TextButton", frame)
 	toggleBtn.Name = "ToggleButton"
 	toggleBtn.Text = getgenv()[varName] and "On" or "Off"
-	toggleBtn.Size = UDim2.new(0.3, 0, 0.75, 0)
+	toggleBtn.Size = UDim2.new(0.5, 0, 1.25, 0)
 	toggleBtn.Position = UDim2.new(0.65, 0, 0.13, 0)
 	toggleBtn.BackgroundColor3 = getgenv()[varName] and Color3.fromRGB(0, 120, 80) or Color3.fromRGB(40, 40, 45)
 	toggleBtn.TextColor3 = Color3.new(1, 1, 1)
